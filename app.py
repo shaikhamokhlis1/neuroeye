@@ -441,7 +441,8 @@ def download_csv_from_s3(file_name):
         return data  # Optionally return the data if needed elsewhere
     except Exception as e:
         print(f"Error downloading CSV from S3: {e}")
-        return None
+        return None
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000)
