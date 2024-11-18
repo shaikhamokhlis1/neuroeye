@@ -136,7 +136,7 @@
             </select>
             <button type="submit">Download</button>
         </form>
-        <a href="/admin_logout" class="actions-button">Logout</a>
+        <a href="/admin_logout">Logout</a>
     </div>
 
     <h2>Analytics</h2>
@@ -163,7 +163,7 @@
             <td>
                 <div class="progress-bar-container">
                     <div class="progress-bar {% if labeled_percentage_normal[user] > 80 %}high-progress{% elif labeled_percentage_normal[user] > 50 %}medium-progress{% else %}low-progress{% endif %}"
-                         style="width: {{ labeled_percentage_normal[user] | round(2) }}%; color: white;">
+                         style="width: {{ labeled_percentage_normal[user] | round(2) }}%;">
                         {{ labeled_percentage_normal[user] | round(2) }}%
                     </div>
                 </div>
@@ -171,7 +171,7 @@
             <td>
                 <div class="progress-bar-container">
                     <div class="progress-bar {% if labeled_percentage_cataract[user] > 80 %}high-progress{% elif labeled_percentage_cataract[user] > 50 %}medium-progress{% else %}low-progress{% endif %}"
-                         style="width: {{ labeled_percentage_cataract[user] | round(2) }}%; color: white;">
+                         style="width: {{ labeled_percentage_cataract[user] | round(2) }}%;">
                         {{ labeled_percentage_cataract[user] | round(2) }}%
                     </div>
                 </div>
@@ -179,7 +179,7 @@
             <td>
                 <div class="progress-bar-container">
                     <div class="progress-bar {% if labeled_percentage_total[user] > 80 %}high-progress{% elif labeled_percentage_total[user] > 50 %}medium-progress{% else %}low-progress{% endif %}"
-                         style="width: {{ labeled_percentage_total[user] | round(2) }}%; color: white;">
+                         style="width: {{ labeled_percentage_total[user] | round(2) }}%;">
                         {{ labeled_percentage_total[user] | round(2) }}%
                     </div>
                 </div>
