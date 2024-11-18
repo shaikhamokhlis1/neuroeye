@@ -138,7 +138,7 @@
                     images = data;
                     if (images.length > 0) {
                         // Load the first image immediately
-                        document.getElementById("image").src = /static/${images[currentIndex]};
+                        document.getElementById("image").src = `/static/${images[currentIndex]}`;
                     } else {
                         // Redirect when all images are labeled
                         window.location.href = "/thankyou";
@@ -176,7 +176,7 @@
         function nextImage() {
             currentIndex++;
             if (currentIndex < images.length) {
-                document.getElementById("image").src = /static/${images[currentIndex]};
+                document.getElementById("image").src = '/static/${images[currentIndex]}';
                 document.getElementById("message").innerText = "";
             } else {
                 window.location.href = "/thankyou";
