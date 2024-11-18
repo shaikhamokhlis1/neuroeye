@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detecting and Grading Cataracts</title>
+    <style>
+        /* Styles for the body, header, logout button, etc. */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to bottom, #f7f9fc, #e0e7ee);
+        }
+        .header {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .header img {
+            width: 100px;
+            margin-right: 10px;
+        }
+        .header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+        .logout-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+        .logout-button:hover {
+            background-color: #005f7f;
+        }
+        h4 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .content-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 50px;
+        }
+        #image {
+            width: 350px;
+            height: 350px;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .button {
+            padding: 15px 30px;
+            font-size: 16px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            text-decoration: none;
+            text-align: center;
+            width: 220px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #005f7f;
+        }
+        #message {
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Top-left corner logo and title -->
+    <div class="header">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+        <h1>NeuroEye</h1>
+    </div>
+
+    <!-- Logout button in the top-right corner -->
+    <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+
+    <h4>Diagnose the patient by clicking the appropriate button</h4>
+
+    <!-- Display the doctor's progress dynamically -->
+    <div style="margin-bottom: 20px; font-size: 18px;">
+        <p>
+            Progress: You have labeled 
+            <strong id="labeled">0</strong> out of 
+            <strong id="total">0</strong> cataract images.
+        </p>
+    </div>
+
+    <div class="content-container">
+        <!-- Display the first image immediately on load -->
+        <img id="image" src="" alt="Medical Image">
+
+        <!-- Buttons on the right -->
+        <div class="button-container">
+            <button type="button" class="button" onclick="selectLabel('Mild')"> Mild </button>
+            <button type="button" class="button" onclick="selectLabel('Mild - Moderate')"> Mild - Moderate </button>
+            <button type="button" class="button" onclick="selectLabel('Moderate - Severe')"> Moderate - Severe </button>
+            <button type="button" class="button" onclick="selectLabel('Severe')"> Severe </button>
+            <button type="button" class="button" onclick="selectLabel('N/A')"> N/A </button>
+        </div>
+    </div>
+
+    <!-- Next Image button below the image and buttons -->
+    <button onclick="nextImage()" class="button" style="margin-top: 30px;">Next Image</button>
+
+    <p id="message" style="color: green; font-weight: bold;"></p>
+
+    <script>
+        let currentIndex = 0;
+        let images = [];
+
+        // Fetch image URLs from Flask when the page loads and immediately load the first image
+        window.onload = function () {
+            fetch('/get_images')
+                .then(response => response.json())
+                .then(data => {
+                    images = data;
+                    if (images.length > 0) {
+                        // Load the first image immediately
+                        document.getElementById("image").src = /static/${images[currentIndex]};
+                    } else {
+                        // Redirect when all images are labeled
+                        window.location.href = "/thankyou";
+                    }
+                })
+                .catch(error => console.error("Error fetching images:", error));
+            
+            // Fetch progress dynamically
+            fetchProgress();
+        };
+
+        // Function to update the label and show success/failure message without advancing
+        function selectLabel(label) {
+            const currentImage = images[currentIndex];
+            fetch('/save_label', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ imagePath: currentImage, label: label })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'Label updated successfully') {
+                    document.getElementById("message").innerText = "Label added successfully!";
+                    document.getElementById("message").style.color = "green";
+                    fetchProgress(); // Update progress dynamically
+                } else {
+                    document.getElementById("message").innerText = "Failed to add label.";
+                    document.getElementById("message").style.color = "red";
+                }
+            })
+            .catch(error => {
+                console.error("Error saving label:", error);
+                document.getElementById("message").innerText = "An error occurred while saving the label.";
+                document.getElementById("message").style.color = "red";
+            });
+        }
+
+        // Function to load the next image only when Next button is clicked
+        function nextImage() {
+            currentIndex++;
+            if (currentIndex < images.length) {
+                document.getElementById("image").src = /static/${images[currentIndex]};
+                document.getElementById("message").innerText = "";
+            } else {
+                window.location.href = "/thankyou";
+            }
+        }
+
+        // Function to fetch and update the progress dynamically
+        function fetchProgress() {
+            fetch('/get_progress')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.error) {
+                        document.getElementById('labeled').innerText = data.labeled_cataract_images;
+                        document.getElementById('total').innerText = data.total_cataract_images;
+                    } else {
+                        console.error("Error fetching progress:", data.error);
+                    }
+                })
+                .catch(error => console.error("Error fetching progress:", error));
+        }
+
+        // Fetch progress every 5 seconds
+        setInterval(fetchProgress, 5000);
+    </script>
+
+</body>
+</html>

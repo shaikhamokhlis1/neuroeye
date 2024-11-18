@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to NeuroEye</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to bottom, #f7f9fc, #e0e7ee); /* Subtle gradient background */
+        }
+
+        .button {
+            padding: 15px 30px;
+            font-size: 16px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 8px; /* Rounded corners */
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            width: 220px; /* Ensure all buttons are the same width */
+            text-align: center;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            transition: background-color 0.3s ease; /* Hover effect transition */
+        }
+
+        .button:hover {
+            background-color: #005f7f; /* Darker color on hover */
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            font-weight: normal; /* Lighter font for a more elegant look */
+            color: #333;
+        }
+
+        img {
+            width: 120px; /* Adjusted logo size for better balance */
+            margin-bottom: 30px; /* Space between the logo and the title */
+        }
+    </style>
+</head>
+<body>
+    
+    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+    <h1>NeuroEye</h1>
+
+    <!-- Buttons for User Login and Admin Login -->
+    <a href="{{ url_for('user_login') }}" class="button">User Login</a>
+    <a href="{{ url_for('admin_login') }}" class="button">Admin Login</a>
+
+</body>
+</html>

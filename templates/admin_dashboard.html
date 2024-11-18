@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        .header img {
+            width: 80px; /* Reduced size */
+            margin-right: 10px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 10px; /* Reduced padding */
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(to bottom, #f7f9fc, #e0e7ee);
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px; /* Reduced margin */
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 8px; /* Reduced padding */
+            text-align: left;
+        }
+
+        th {
+            background-color: #008CBA;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        td {
+            background-color: #ffffff;
+        }
+
+        /* Button and Dropdown Styling */
+        .actions {
+            position: absolute;
+            top: 10px; /* Reduced space from top */
+            right: 10px; /* Reduced space from right */
+            display: flex;
+            gap: 10px; /* Space between elements */
+        }
+
+        .actions a, .actions button {
+            text-decoration: none;
+            font-size: 14px; /* Slightly smaller font */
+            background-color: #008CBA;
+            color: white;
+            padding: 8px 16px; /* Reduced padding */
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .actions a:hover, .actions button:hover {
+            background-color: #005f7f;
+        }
+
+        /* Dropdown styling */
+        .actions select {
+            padding: 6px 10px; /* Reduced padding */
+            font-size: 14px;
+            border-radius: 8px;
+            border: 1px solid #008CBA;
+            outline: none;
+            background-color: white;
+            color: #333;
+            cursor: pointer;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .actions select:hover {
+            border-color: #005f7f;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Progress Bar Styling */
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e0e7ee;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress-bar {
+            height: 18px; /* Reduced height */
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            transition: width 0.4s ease;
+        }
+
+        /* Specific colors for progress levels */
+        .low-progress { background-color: #dc3545; }    /* Red for 0-50% */
+        .medium-progress { background-color: #ffc107; } /* Yellow for 51-80% */
+        .high-progress { background-color: #28a745; }   /* Green for 81-100% */
+
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+        <h1>NeuroEye</h1>
+    </div>
+
+    <h1>Admin Dashboard</h1>
+
+    <div class="actions">
+        <form action="{{ url_for('download_csv') }}" method="get" style="display: inline;">
+            <select name="user" id="csvFile">
+                <option value="merged">Merged CSV</option>
+                <option value="Dr. Abdullah">Dr. Abdullah</option>
+                <option value="Dr. Ali">Dr. Ali</option>
+                <option value="Dr. Laith">Dr. Laith</option>
+                <option value="Dr. Lama">Dr. Lama</option>
+                <option value="Dr. Yasser">Dr. Yasser</option>
+            </select>
+            <button type="submit">Download</button>
+        </form>
+        <a href="/admin_logout" class="actions-button">Logout</a>
+    </div>
+
+    <h2>Analytics</h2>
+    <p>Total Images: {{ total_images }}</p>
+    <p>Normal Images: {{ normal_images }}</p>
+    <p>Cataract Images: {{ cataract_images }}</p>
+
+    <table>
+        <tr>
+            <th>User</th>
+            <th>Normal Images Labeled</th>
+            <th>Cataract Images Labeled</th>
+            <th>Total Images Labeled</th>
+            <th>Normal Labeled Percentage</th>
+            <th>Cataract Labeled Percentage</th>
+            <th>Total Labeled Percentage</th>
+        </tr>
+        {% for user in user_labels_normal.keys() %}
+        <tr>
+            <td>{{ user }}</td>
+            <td>{{ user_labels_normal[user] }}</td>
+            <td>{{ user_labels_cataract[user] }}</td>
+            <td>{{ total_labeled[user] }}</td>
+            <td>
+                <div class="progress-bar-container">
+                    <div class="progress-bar {% if labeled_percentage_normal[user] > 80 %}high-progress{% elif labeled_percentage_normal[user] > 50 %}medium-progress{% else %}low-progress{% endif %}"
+                         style="width: {{ labeled_percentage_normal[user] | round(2) }}%; color: white;">
+                        {{ labeled_percentage_normal[user] | round(2) }}%
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="progress-bar-container">
+                    <div class="progress-bar {% if labeled_percentage_cataract[user] > 80 %}high-progress{% elif labeled_percentage_cataract[user] > 50 %}medium-progress{% else %}low-progress{% endif %}"
+                         style="width: {{ labeled_percentage_cataract[user] | round(2) }}%; color: white;">
+                        {{ labeled_percentage_cataract[user] | round(2) }}%
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="progress-bar-container">
+                    <div class="progress-bar {% if labeled_percentage_total[user] > 80 %}high-progress{% elif labeled_percentage_total[user] > 50 %}medium-progress{% else %}low-progress{% endif %}"
+                         style="width: {{ labeled_percentage_total[user] | round(2) }}%; color: white;">
+                        {{ labeled_percentage_total[user] | round(2) }}%
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>

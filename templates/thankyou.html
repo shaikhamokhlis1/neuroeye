@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to bottom, #f7f9fc, #e0e7ee); /* Subtle gradient background */
+        }
+
+        /* Align the logo and title to the top-left corner */
+        .header {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header img {
+            width: 100px; /* Adjust logo size to match other pages */
+            margin-right: 10px;
+        }
+
+        .header h1 {
+            font-size: 24px; /* Make the logo title consistent */
+            margin: 0;
+        }
+
+        .message {
+            font-size: 28px;
+            color: #333;
+            text-align: center; /* Centering both lines */
+            line-height: 1.5; /* Space between lines */
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Top-left corner logo and title -->
+    <div class="header">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+        <h1>NeuroEye</h1>
+    </div>
+
+    <!-- Centered thank you message -->
+    <h1 class="message">
+        All the images have been labeled.<br>
+        Your work is appreciated!
+    </h1>
+
+</body>
+</html>
