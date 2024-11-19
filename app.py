@@ -247,8 +247,14 @@ def save_label():
                 if row['imagePath'] == image_url:
                     row[f'label_{username}'] = label
 
+            # Dynamically determine fieldnames based on existing CSV headers
+            if rows:
+                fieldnames = rows[0].keys()
+            else:
+                # Default fieldnames if the file is empty
+                fieldnames = ['id', 'imagePath'] + [f'label_{user}' for user in users]
+
             # Write the updated rows back to S3
-            fieldnames = ['id', 'imagePath'] + [f'label_{user}' for user in users]
             write_csv_to_s3(file_name, rows, fieldnames)
 
             # Return a success response for JavaScript to handle
@@ -259,6 +265,7 @@ def save_label():
             return jsonify({'status': 'Error occurred', 'message': str(e)}), 500
     else:
         return redirect(url_for('user_login'))
+
 
 # Thank you page route
 @app.route('/thankyou')
