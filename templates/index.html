@@ -176,12 +176,15 @@
         function nextImage() {
             currentIndex++;
             if (currentIndex < images.length) {
-                document.getElementById("image").src = '/static/${images[currentIndex]}';
+                const newImageUrl = `/static/${images[currentIndex]}?t=${Date.now()}`;
+                console.log("Loading image:", newImageUrl); // For debugging
+                document.getElementById("image").src = newImageUrl;
                 document.getElementById("message").innerText = "";
             } else {
                 window.location.href = "/thankyou";
             }
         }
+
     </script>
 
 </body>
